@@ -1,4 +1,5 @@
 """AC_RL telemetry app: sends telemetry over UDP and accepts JSON commands via file or UDP."""
+
 import ac
 import acsys
 import json
@@ -28,6 +29,7 @@ except Exception:
 
 from IS_ACUtil import *
 
+
 # Module-level debug logger so startup/import errors can be recorded to disk
 def file_log(msg):
     try:
@@ -39,6 +41,7 @@ def file_log(msg):
             ac.log("[AC_RL] %s" % msg)
         except Exception:
             pass
+
 
 try:
     import ac_api.car_info as car_info
@@ -61,7 +64,6 @@ except Exception as e:
         pass
 
 
-
 def safe_call(mod, name, *args, default=None):
     try:
         if mod is None:
@@ -72,7 +74,10 @@ def safe_call(mod, name, *args, default=None):
         return fn(*args)
     except Exception as e:
         try:
-            file_log("safe_call error %s.%s: %s" % (getattr(mod, '__name__', str(mod)), name, e))
+            file_log(
+                "safe_call error %s.%s: %s"
+                % (getattr(mod, "__name__", str(mod)), name, e)
+            )
         except Exception:
             pass
         return default
@@ -82,6 +87,7 @@ def safe_call(mod, name, *args, default=None):
 def _create_udp_socket(bind=False, host="127.0.0.1", port=0, blocking=False):
     try:
         import socket
+
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         if bind:
             s.bind((host, int(port)))
@@ -89,7 +95,10 @@ def _create_udp_socket(bind=False, host="127.0.0.1", port=0, blocking=False):
         return s
     except Exception as e:
         try:
-            file_log("_create_udp_socket error host=%s port=%s bind=%s: %s" % (host, port, bind, e))
+            file_log(
+                "_create_udp_socket error host=%s port=%s bind=%s: %s"
+                % (host, port, bind, e)
+            )
         except Exception:
             pass
         return None
@@ -103,7 +112,7 @@ def _close_socket(sock, name=None):
             except Exception:
                 pass
             try:
-                file_log("Socket %s closed" % (name or '<socket>'))
+                file_log("Socket %s closed" % (name or "<socket>"))
             except Exception:
                 pass
     except Exception:
@@ -113,7 +122,11 @@ def _close_socket(sock, name=None):
 def call_sendcmd(*args, **kwargs):
     """Safe wrapper around sendCMD provided by IS_ACUtil or fallback to ac.sendCommand if available."""
     try:
-        fn = globals().get('sendCMD') or globals().get('sendcmd') or getattr(ac, 'sendCommand', None)
+        fn = (
+            globals().get("sendCMD")
+            or globals().get("sendcmd")
+            or getattr(ac, "sendCommand", None)
+        )
         if callable(fn):
             return fn(*args, **kwargs)
     except Exception as e:
@@ -122,11 +135,13 @@ def call_sendcmd(*args, **kwargs):
         except Exception:
             pass
     return None
+
+
 # --------------------------------------------------------------------
 
 
 appName = "AC_RL"
-width, height = 800 , 800 
+width, height = 800, 800
 
 
 TELEMETRY_FILENAME = "AC_RL_telemetry.json"
@@ -143,9 +158,11 @@ INPUT_UDP_PORT = 9877
 input_sock = None
 input_addr = (INPUT_UDP_HOST, INPUT_UDP_PORT)
 
+
 def handle_input_data(cmd, path=None):
     """Process a dict of commands coming from file or socket.
-    If path is provided and reset is handled, the function will write back reset=False to that file."""
+    If path is provided and reset is handled, the function will write back reset=False to that file.
+    """
     try:
         if not isinstance(cmd, dict):
             return
@@ -156,17 +173,19 @@ def handle_input_data(cmd, path=None):
         global TELEMETRY_UDP_HOST, TELEMETRY_UDP_PORT, telemetry_addr, telemetry_sock
         global INPUT_UDP_HOST, INPUT_UDP_PORT, input_addr, input_sock
 
-        # Telemetry UDP override
-        if 'telemetry_udp_host' in cmd or 'telemetry_udp_port' in cmd:
-            host = cmd.get('telemetry_udp_host', TELEMETRY_UDP_HOST)
-            port = cmd.get('telemetry_udp_port', TELEMETRY_UDP_PORT)
+        if "telemetry_udp_host" in cmd or "telemetry_udp_port" in cmd:
+            host = cmd.get("telemetry_udp_host", TELEMETRY_UDP_HOST)
+            port = cmd.get("telemetry_udp_port", TELEMETRY_UDP_PORT)
             try:
                 port = int(port)
                 TELEMETRY_UDP_HOST = host
                 TELEMETRY_UDP_PORT = port
                 telemetry_addr = (TELEMETRY_UDP_HOST, TELEMETRY_UDP_PORT)
                 try:
-                    file_log("Telemetry UDP target updated to %s:%d via input" % telemetry_addr)
+                    file_log(
+                        "Telemetry UDP target updated to %s:%d via input"
+                        % telemetry_addr
+                    )
                 except Exception:
                     pass
             except Exception as e:
@@ -175,11 +194,10 @@ def handle_input_data(cmd, path=None):
                 except Exception:
                     pass
 
-        # Toggle telemetry UDP
-        if 'use_udp_telemetry' in cmd:
-            use_udp = bool(cmd.get('use_udp_telemetry'))
+        if "use_udp_telemetry" in cmd:
+            use_udp = bool(cmd.get("use_udp_telemetry"))
             if not use_udp and telemetry_sock:
-                _close_socket(telemetry_sock, 'telemetry')
+                _close_socket(telemetry_sock, "telemetry")
                 telemetry_sock = None
                 try:
                     file_log("Telemetry UDP disabled via input")
@@ -187,10 +205,17 @@ def handle_input_data(cmd, path=None):
                     pass
             elif use_udp and telemetry_sock is None:
                 try:
-                    telemetry_sock = _create_udp_socket(bind=False, host=TELEMETRY_UDP_HOST, port=TELEMETRY_UDP_PORT, blocking=True)
+                    telemetry_sock = _create_udp_socket(
+                        bind=False,
+                        host=TELEMETRY_UDP_HOST,
+                        port=TELEMETRY_UDP_PORT,
+                        blocking=True,
+                    )
                     telemetry_addr = (TELEMETRY_UDP_HOST, TELEMETRY_UDP_PORT)
                     try:
-                        file_log("Telemetry UDP enabled via input to %s:%d" % telemetry_addr)
+                        file_log(
+                            "Telemetry UDP enabled via input to %s:%d" % telemetry_addr
+                        )
                     except Exception:
                         pass
                 except Exception as e:
@@ -199,10 +224,9 @@ def handle_input_data(cmd, path=None):
                     except Exception:
                         pass
 
-        # Input UDP override/bind
-        if 'input_udp_host' in cmd or 'input_udp_port' in cmd:
-            host = cmd.get('input_udp_host', INPUT_UDP_HOST)
-            port = cmd.get('input_udp_port', INPUT_UDP_PORT)
+        if "input_udp_host" in cmd or "input_udp_port" in cmd:
+            host = cmd.get("input_udp_host", INPUT_UDP_HOST)
+            port = cmd.get("input_udp_port", INPUT_UDP_PORT)
             try:
                 port = int(port)
                 INPUT_UDP_HOST = host
@@ -216,7 +240,12 @@ def handle_input_data(cmd, path=None):
                         pass
                     input_sock = None
                 try:
-                    input_sock = _create_udp_socket(bind=True, host=INPUT_UDP_HOST, port=INPUT_UDP_PORT, blocking=False)
+                    input_sock = _create_udp_socket(
+                        bind=True,
+                        host=INPUT_UDP_HOST,
+                        port=INPUT_UDP_PORT,
+                        blocking=False,
+                    )
                     try:
                         file_log("Input UDP socket bound to %s:%d" % input_addr)
                     except Exception:
@@ -232,11 +261,10 @@ def handle_input_data(cmd, path=None):
                 except Exception:
                     pass
 
-        # Toggle input UDP
-        if 'use_input_udp' in cmd:
-            use_in = bool(cmd.get('use_input_udp'))
+        if "use_input_udp" in cmd:
+            use_in = bool(cmd.get("use_input_udp"))
             if not use_in and input_sock:
-                _close_socket(input_sock, 'input')
+                _close_socket(input_sock, "input")
                 input_sock = None
                 try:
                     file_log("Input UDP disabled via input")
@@ -244,9 +272,17 @@ def handle_input_data(cmd, path=None):
                     pass
             elif use_in and input_sock is None:
                 try:
-                    input_sock = _create_udp_socket(bind=True, host=INPUT_UDP_HOST, port=INPUT_UDP_PORT, blocking=False)
+                    input_sock = _create_udp_socket(
+                        bind=True,
+                        host=INPUT_UDP_HOST,
+                        port=INPUT_UDP_PORT,
+                        blocking=False,
+                    )
                     try:
-                        file_log("Input UDP enabled via input to %s:%d" % (INPUT_UDP_HOST, INPUT_UDP_PORT))
+                        file_log(
+                            "Input UDP enabled via input to %s:%d"
+                            % (INPUT_UDP_HOST, INPUT_UDP_PORT)
+                        )
                     except Exception:
                         pass
                 except Exception as e:
@@ -255,8 +291,7 @@ def handle_input_data(cmd, path=None):
                     except Exception:
                         pass
 
-        # Reset command
-        if cmd.get('reset') is True:
+        if cmd.get("reset") is True:
             try:
                 try:
                     call_sendcmd(68)
@@ -272,12 +307,11 @@ def handle_input_data(cmd, path=None):
                 except Exception:
                     pass
 
-            # If this came from the file, write back reset=false
             if path:
                 try:
-                    cmd['reset'] = False
-                    tmp = path + '.tmp'
-                    with open(tmp, 'w', encoding='utf-8') as f:
+                    cmd["reset"] = False
+                    tmp = path + ".tmp"
+                    with open(tmp, "w", encoding="utf-8") as f:
                         json.dump(cmd, f)
                     try:
                         os.replace(tmp, path)
@@ -285,7 +319,7 @@ def handle_input_data(cmd, path=None):
                         os.rename(tmp, path)
                 except Exception as e:
                     try:
-                        file_log('Error writing input file after reset: %s' % e)
+                        file_log("Error writing input file after reset: %s" % e)
                     except Exception:
                         pass
     except Exception:
@@ -347,7 +381,7 @@ def check_input_file():
                     # No more data available
                     break
                 try:
-                    cmd = json.loads(pkt.decode('utf-8'))
+                    cmd = json.loads(pkt.decode("utf-8"))
                 except Exception as e:
                     try:
                         file_log("Error parsing input UDP JSON from %s: %s" % (addr, e))
@@ -366,21 +400,24 @@ def check_input_file():
                 pass
 
 
-def acMain(ac_version):#----------------------------- App window Init
+def acMain(ac_version):  # ----------------------------- App window Init
 
     # Don't forget to put anything you'll need to update later as a global variables
-    global appWindow # <- you'll need to update your window in other functions.
+    global appWindow  # <- you'll need to update your window in other functions.
 
     appWindow = ac.newApp(appName)
     ac.setTitle(appWindow, appName)
     ac.setSize(appWindow, width, height)
 
-    ac.addRenderCallback(appWindow, appGL) # -> links this app's window to an OpenGL render function
+    ac.addRenderCallback(
+        appWindow, appGL
+    )  # -> links this app's window to an OpenGL render function
 
     # ensure file_log exists (if import failed above we created it)
     try:
         file_log("acMain starting")
     except NameError:
+
         def file_log(msg):
             try:
                 path = os.path.join(os.path.dirname(__file__), "AC_RL_debug.log")
@@ -388,18 +425,24 @@ def acMain(ac_version):#----------------------------- App window Init
                     f.write("%s %s\n" % (time.strftime("%Y-%m-%d %H:%M:%S"), msg))
             except Exception:
                 pass
+
         file_log("acMain starting")
 
     # Create UDP socket to send tyre telemetry
     try:
-        file_log("AC_RL telemetry configured for UDP %s:%d and file %s" % (TELEMETRY_UDP_HOST, TELEMETRY_UDP_PORT, TELEMETRY_FILENAME))
+        file_log(
+            "AC_RL telemetry configured for UDP %s:%d and file %s"
+            % (TELEMETRY_UDP_HOST, TELEMETRY_UDP_PORT, TELEMETRY_FILENAME)
+        )
     except Exception:
         pass
 
     # Try to create a UDP socket; prefer using the bundled _socket if available
     global telemetry_sock, telemetry_addr, input_sock, input_addr
 
-    telemetry_sock = _create_udp_socket(bind=False, host=TELEMETRY_UDP_HOST, port=TELEMETRY_UDP_PORT, blocking=True)
+    telemetry_sock = _create_udp_socket(
+        bind=False, host=TELEMETRY_UDP_HOST, port=TELEMETRY_UDP_PORT, blocking=True
+    )
     telemetry_addr = (TELEMETRY_UDP_HOST, TELEMETRY_UDP_PORT)
     if telemetry_sock:
         try:
@@ -407,7 +450,9 @@ def acMain(ac_version):#----------------------------- App window Init
         except Exception:
             pass
 
-    input_sock = _create_udp_socket(bind=True, host=INPUT_UDP_HOST, port=INPUT_UDP_PORT, blocking=False)
+    input_sock = _create_udp_socket(
+        bind=True, host=INPUT_UDP_HOST, port=INPUT_UDP_PORT, blocking=False
+    )
     input_addr = (INPUT_UDP_HOST, INPUT_UDP_PORT)
     if input_sock:
         try:
@@ -430,13 +475,10 @@ def acMain(ac_version):#----------------------------- App window Init
     ac.setPosition(hdr, 10, 0)
     ac.setFontSize(hdr, 16)
 
- 
-
     return appName
 
 
-
-def appGL(deltaT):#-------------------------------- OpenGL UPDATE
+def appGL(deltaT):  # -------------------------------- OpenGL UPDATE
     """
     This is where you redraw your openGL graphics
     if you need to use them .
@@ -445,9 +487,7 @@ def appGL(deltaT):#-------------------------------- OpenGL UPDATE
     acUpdate(deltaT)
 
 
-
-
-def acUpdate(deltaT):#-------------------------------- AC UPDATE
+def acUpdate(deltaT):  # -------------------------------- AC UPDATE
     """
     This is where you update your app window ( != OpenGL graphics )
     such as : labels , listener , ect ...
@@ -487,94 +527,118 @@ def acUpdate(deltaT):#-------------------------------- AC UPDATE
             # Build full telemetry payload (session, car, inputs, lap, tyres, stats)
             tyres = []
             for t in range(4):
-                tyres.append({
-                    "index": t,
-                    "wear": safe_call(tyre_info, 'get_tyre_wear_value', t, default=None),
-                    "dirty": safe_call(tyre_info, 'get_tyre_dirty', t, default=None),
-                    "pressure": safe_call(tyre_info, 'get_tyre_pressure', t, default=None),
-                    "temp_i": safe_call(tyre_info, 'get_tyre_temp', t, 'i', default=None),
-                    "temp_m": safe_call(tyre_info, 'get_tyre_temp', t, 'm', default=None),
-                    "temp_o": safe_call(tyre_info, 'get_tyre_temp', t, 'o', default=None),
-                    "slip_ratio": safe_call(tyre_info, 'get_slip_ratio', t, default=None),
-                    "slip_angle": safe_call(tyre_info, 'get_slip_angle', t, default=None),
-                    # "load": safe_call(tyre_info, 'get_load', t, default=None),
-                    "heading_vector": safe_call(tyre_info, 'get_tyre_heading_vector', t, default=None),
-                    "angular_speed": safe_call(tyre_info, 'get_angular_speed', t, default=None),
-                })
+                tyres.append(
+                    {
+                        "index": t,
+                        "wear": safe_call(
+                            tyre_info, "get_tyre_wear_value", t, default=None
+                        ),
+                        "dirty": safe_call(
+                            tyre_info, "get_tyre_dirty", t, default=None
+                        ),
+                        "pressure": safe_call(
+                            tyre_info, "get_tyre_pressure", t, default=None
+                        ),
+                        "temp_i": safe_call(
+                            tyre_info, "get_tyre_temp", t, "i", default=None
+                        ),
+                        "temp_m": safe_call(
+                            tyre_info, "get_tyre_temp", t, "m", default=None
+                        ),
+                        "temp_o": safe_call(
+                            tyre_info, "get_tyre_temp", t, "o", default=None
+                        ),
+                        "slip_ratio": safe_call(
+                            tyre_info, "get_slip_ratio", t, default=None
+                        ),
+                        "slip_angle": safe_call(
+                            tyre_info, "get_slip_angle", t, default=None
+                        ),
+                        # "load": safe_call(tyre_info, 'get_load', t, default=None),
+                        "heading_vector": safe_call(
+                            tyre_info, "get_tyre_heading_vector", t, default=None
+                        ),
+                        "angular_speed": safe_call(
+                            tyre_info, "get_angular_speed", t, default=None
+                        ),
+                    }
+                )
 
             session = {
-                'session_type': safe_call(session_info, 'get_session_type'),
-                'driver_name': safe_call(session_info, 'get_driver_name'),
-                'track_name': safe_call(session_info, 'get_track_name'),
-                'track_config': safe_call(session_info, 'get_track_config'),
-                'track_length': safe_call(session_info, 'get_track_length'),
-                'cars_count': safe_call(session_info, 'get_cars_count'),
-                'session_status': safe_call(session_info, 'get_session_status'),
-                'air_temp': safe_call(session_info, 'get_air_temp'),
-                'road_temp': safe_call(session_info, 'get_road_temp'),
+                "session_type": safe_call(session_info, "get_session_type"),
+                "driver_name": safe_call(session_info, "get_driver_name"),
+                "track_name": safe_call(session_info, "get_track_name"),
+                "track_config": safe_call(session_info, "get_track_config"),
+                "track_length": safe_call(session_info, "get_track_length"),
+                "cars_count": safe_call(session_info, "get_cars_count"),
+                "session_status": safe_call(session_info, "get_session_status"),
+                "air_temp": safe_call(session_info, "get_air_temp"),
+                "road_temp": safe_call(session_info, "get_road_temp"),
                 # 'tyre_compound': safe_call(session_info, 'get_tyre_compound'),
             }
 
             car = {
-                'speed_kmh': safe_call(car_info, 'get_speed', 0, 'kmh'),
-                'speed_mph': safe_call(car_info, 'get_speed', 0, 'mph'),
-                'speed_ms': safe_call(car_info, 'get_speed', 0, 'ms'),
-                'location': safe_call(car_info, 'get_location', 0),
-                'world_location': safe_call(car_info, 'get_world_location', 0),
-                'position': safe_call(car_info, 'get_position', 0),
-                'drs_available': safe_call(car_info, 'get_drs_available'),
-                'drs_enabled': safe_call(car_info, 'get_drs_enabled'),
-                'gear': safe_call(car_info, 'get_gear', 0, True),
-                'rpm': safe_call(car_info, 'get_rpm', 0),
-                'fuel': safe_call(car_info, 'get_fuel'),
-                'tyres_off_track': safe_call(car_info, 'get_tyres_off_track'),
-                'in_pit_lane': safe_call(car_info, 'get_car_in_pit_lane'),
-                'damage': safe_call(car_info, 'get_total_damage'),
-                'cg_height': safe_call(car_info, 'get_cg_height', 0),
-                'drive_train_speed': safe_call(car_info, 'get_drive_train_speed', 0),
-                'velocity': safe_call(car_info, 'get_velocity'),
-                'acceleration': safe_call(car_info, 'get_acceleration'),
+                "speed_kmh": safe_call(car_info, "get_speed", 0, "kmh"),
+                "speed_mph": safe_call(car_info, "get_speed", 0, "mph"),
+                "speed_ms": safe_call(car_info, "get_speed", 0, "ms"),
+                "location": safe_call(car_info, "get_location", 0),
+                "world_location": safe_call(car_info, "get_world_location", 0),
+                "position": safe_call(car_info, "get_position", 0),
+                "drs_available": safe_call(car_info, "get_drs_available"),
+                "drs_enabled": safe_call(car_info, "get_drs_enabled"),
+                "gear": safe_call(car_info, "get_gear", 0, True),
+                "rpm": safe_call(car_info, "get_rpm", 0),
+                "fuel": safe_call(car_info, "get_fuel"),
+                "tyres_off_track": safe_call(car_info, "get_tyres_off_track"),
+                "in_pit_lane": safe_call(car_info, "get_car_in_pit_lane"),
+                "damage": safe_call(car_info, "get_total_damage"),
+                "cg_height": safe_call(car_info, "get_cg_height", 0),
+                "drive_train_speed": safe_call(car_info, "get_drive_train_speed", 0),
+                "velocity": safe_call(car_info, "get_velocity"),
+                "acceleration": safe_call(car_info, "get_acceleration"),
             }
 
             inputs = {
-                'gas': safe_call(input_info, 'get_gas_input', 0),
-                'brake': safe_call(input_info, 'get_brake_input', 0),
-                'clutch': safe_call(input_info, 'get_clutch', 0),
-                'steer': safe_call(input_info, 'get_steer_input', 0),
-                'last_ff': safe_call(input_info, 'get_last_ff', 0),
+                "gas": safe_call(input_info, "get_gas_input", 0),
+                "brake": safe_call(input_info, "get_brake_input", 0),
+                "clutch": safe_call(input_info, "get_clutch", 0),
+                "steer": safe_call(input_info, "get_steer_input", 0),
+                "last_ff": safe_call(input_info, "get_last_ff", 0),
             }
 
             lap = {
-                'current_lap_time': safe_call(lap_info, 'get_current_lap_time', 0, False),
-                'last_lap_time': safe_call(lap_info, 'get_last_lap_time', 0, False),
-                'best_lap_time': safe_call(lap_info, 'get_best_lap_time', 0, False),
-                'splits': safe_call(lap_info, 'get_splits', 0, False),
-                'split': safe_call(lap_info, 'get_split'),
-                'invalid': safe_call(lap_info, 'get_invalid', 0),
-                'lap_count': safe_call(lap_info, 'get_lap_count', 0),
-                'laps_total': safe_call(lap_info, 'get_laps'),
-                'lap_delta': safe_call(lap_info, 'get_lap_delta', 0),
-                'current_sector': safe_call(lap_info, 'get_current_sector'),
+                "current_lap_time": safe_call(
+                    lap_info, "get_current_lap_time", 0, False
+                ),
+                "last_lap_time": safe_call(lap_info, "get_last_lap_time", 0, False),
+                "best_lap_time": safe_call(lap_info, "get_best_lap_time", 0, False),
+                "splits": safe_call(lap_info, "get_splits", 0, False),
+                "split": safe_call(lap_info, "get_split"),
+                "invalid": safe_call(lap_info, "get_invalid", 0),
+                "lap_count": safe_call(lap_info, "get_lap_count", 0),
+                "laps_total": safe_call(lap_info, "get_laps"),
+                "lap_delta": safe_call(lap_info, "get_lap_delta", 0),
+                "current_sector": safe_call(lap_info, "get_current_sector"),
             }
 
             stats = {
-                'has_drs': safe_call(car_stats, 'get_has_drs'),
-                'has_ers': safe_call(car_stats, 'get_has_ers'),
-                'has_kers': safe_call(car_stats, 'get_has_kers'),
-                'abs_level': safe_call(car_stats, 'abs_level'),
-                'max_rpm': safe_call(car_stats, 'get_max_rpm'),
-                'max_fuel': safe_call(car_stats, 'get_max_fuel'),
+                "has_drs": safe_call(car_stats, "get_has_drs"),
+                "has_ers": safe_call(car_stats, "get_has_ers"),
+                "has_kers": safe_call(car_stats, "get_has_kers"),
+                "abs_level": safe_call(car_stats, "abs_level"),
+                "max_rpm": safe_call(car_stats, "get_max_rpm"),
+                "max_fuel": safe_call(car_stats, "get_max_fuel"),
             }
 
             payload = {
-                'app': appName,
-                'timestamp': time.time(),
-                'session': session,
-                'car': car,
-                'inputs': inputs,
-                'lap': lap,
-                'tyres': tyres,
-                'stats': stats,
+                "app": appName,
+                "timestamp": time.time(),
+                "session": session,
+                "car": car,
+                "inputs": inputs,
+                "lap": lap,
+                "tyres": tyres,
+                "stats": stats,
             }
 
             sent = False
@@ -624,7 +688,7 @@ def acUpdate(deltaT):#-------------------------------- AC UPDATE
             file_log("Error updating tyre labels: %s" % e)
         except Exception:
             pass
-        
+
 
 def acShutdown():
     """Cleanup socket on shutdown."""

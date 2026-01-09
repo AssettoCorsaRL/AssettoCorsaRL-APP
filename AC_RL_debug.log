@@ -21911,3 +21911,145 @@
 2025-12-31 22:56:41 Telemetry UDP target updated to 127.0.0.1:9876 via input
 2025-12-31 22:57:06 Telemetry socket closed
 2025-12-31 22:57:06 Input socket closed
+2026-01-01 21:14:22 acMain starting
+2026-01-01 21:14:22 AC_RL telemetry configured for UDP 127.0.0.1:9876 and file AC_RL_telemetry.json
+2026-01-01 21:14:22 Telemetry UDP socket created to 127.0.0.1:9876
+2026-01-01 21:14:22 Input UDP socket bound to 127.0.0.1:9877
+2026-01-01 21:15:55 Telemetry socket closed
+2026-01-01 21:15:55 Input socket closed
+2026-01-01 21:16:00 acMain starting
+2026-01-01 21:16:00 AC_RL telemetry configured for UDP 127.0.0.1:9876 and file AC_RL_telemetry.json
+2026-01-01 21:16:00 Telemetry UDP socket created to 127.0.0.1:9876
+2026-01-01 21:16:00 Input UDP socket bound to 127.0.0.1:9877
+2026-01-01 21:26:19 Telemetry socket closed
+2026-01-01 21:26:19 Input socket closed
+2026-01-01 21:33:36 acMain starting
+2026-01-01 21:33:36 AC_RL telemetry configured for UDP 127.0.0.1:9876 and file AC_RL_telemetry.json
+2026-01-01 21:33:36 Telemetry UDP socket created to 127.0.0.1:9876
+2026-01-01 21:33:36 Input UDP socket bound to 127.0.0.1:9877
+2026-01-01 21:33:51 Telemetry socket closed
+2026-01-01 21:33:51 Input socket closed
+2026-01-01 21:34:03 acMain starting
+2026-01-01 21:34:03 AC_RL telemetry configured for UDP 127.0.0.1:9876 and file AC_RL_telemetry.json
+2026-01-01 21:34:03 Telemetry UDP socket created to 127.0.0.1:9876
+2026-01-01 21:34:03 Input UDP socket bound to 127.0.0.1:9877
+2026-01-01 21:41:49 Telemetry socket closed
+2026-01-01 21:41:49 Input socket closed
+2026-01-02 12:21:55 acMain starting
+2026-01-02 12:21:55 AC_RL telemetry configured for UDP 127.0.0.1:9876 and file AC_RL_telemetry.json
+2026-01-02 12:21:55 Telemetry UDP socket created to 127.0.0.1:9876
+2026-01-02 12:21:55 Input UDP socket bound to 127.0.0.1:9877
+2026-01-02 12:24:01 Telemetry socket closed
+2026-01-02 12:24:01 Input socket closed
+2026-01-02 12:28:28 acMain starting
+2026-01-02 12:28:28 AC_RL telemetry configured for UDP 127.0.0.1:9876 and file AC_RL_telemetry.json
+2026-01-02 12:28:28 Telemetry UDP socket created to 127.0.0.1:9876
+2026-01-02 12:28:28 Input UDP socket bound to 127.0.0.1:9877
+2026-01-02 12:28:46 Telemetry socket closed
+2026-01-02 12:28:46 Input socket closed
+2026-01-02 12:55:51 acMain starting
+2026-01-02 12:55:51 AC_RL telemetry configured for UDP 127.0.0.1:9876 and file AC_RL_telemetry.json
+2026-01-02 12:55:51 Telemetry UDP socket created to 127.0.0.1:9876
+2026-01-02 12:55:51 Input UDP socket bound to 127.0.0.1:9877
+2026-01-02 12:55:55 Telemetry socket closed
+2026-01-02 12:55:55 Input socket closed
+2026-01-02 12:58:16 acMain starting
+2026-01-02 12:58:16 AC_RL telemetry configured for UDP 127.0.0.1:9876 and file AC_RL_telemetry.json
+2026-01-02 12:58:16 Telemetry UDP socket created to 127.0.0.1:9876
+2026-01-02 12:58:16 Input UDP socket bound to 127.0.0.1:9877
+2026-01-02 13:00:45 Telemetry socket closed
+2026-01-02 13:00:45 Input socket closed
+2026-01-02 13:01:04 acMain starting
+2026-01-02 13:01:04 AC_RL telemetry configured for UDP 127.0.0.1:9876 and file AC_RL_telemetry.json
+2026-01-02 13:01:04 Telemetry UDP socket created to 127.0.0.1:9876
+2026-01-02 13:01:04 Input UDP socket bound to 127.0.0.1:9877
+2026-01-02 13:04:45 Telemetry socket closed
+2026-01-02 13:04:45 Input socket closed
+2026-01-02 13:55:24 acMain starting
+2026-01-02 13:55:24 AC_RL telemetry configured for UDP 127.0.0.1:9876 and file AC_RL_telemetry.json
+2026-01-02 13:55:24 Telemetry UDP socket created to 127.0.0.1:9876
+2026-01-02 13:55:24 Input UDP socket bound to 127.0.0.1:9877
+2026-01-02 13:58:28 Telemetry socket closed
+2026-01-02 13:58:28 Input socket closed
+2026-01-02 14:18:22 acMain starting
+2026-01-02 14:18:22 AC_RL telemetry configured for UDP 127.0.0.1:9876 and file AC_RL_telemetry.json
+2026-01-02 14:18:22 Telemetry UDP socket created to 127.0.0.1:9876
+2026-01-02 14:18:22 Input UDP socket bound to 127.0.0.1:9877
+2026-01-02 14:19:33 Telemetry socket closed
+2026-01-02 14:19:33 Input socket closed
+2026-01-02 14:20:10 acMain starting
+2026-01-02 14:20:10 AC_RL telemetry configured for UDP 127.0.0.1:9876 and file AC_RL_telemetry.json
+2026-01-02 14:20:10 Telemetry UDP socket created to 127.0.0.1:9876
+2026-01-02 14:20:10 Input UDP socket bound to 127.0.0.1:9877
+2026-01-02 14:21:43 Telemetry socket closed
+2026-01-02 14:21:43 Input socket closed
+2026-01-02 14:22:08 acMain starting
+2026-01-02 14:22:08 AC_RL telemetry configured for UDP 127.0.0.1:9876 and file AC_RL_telemetry.json
+2026-01-02 14:22:08 Telemetry UDP socket created to 127.0.0.1:9876
+2026-01-02 14:22:08 Input UDP socket bound to 127.0.0.1:9877
+2026-01-02 14:22:43 Telemetry socket closed
+2026-01-02 14:22:43 Input socket closed
+2026-01-02 14:23:45 acMain starting
+2026-01-02 14:23:45 AC_RL telemetry configured for UDP 127.0.0.1:9876 and file AC_RL_telemetry.json
+2026-01-02 14:23:45 Telemetry UDP socket created to 127.0.0.1:9876
+2026-01-02 14:23:45 Input UDP socket bound to 127.0.0.1:9877
+2026-01-02 14:24:55 Telemetry socket closed
+2026-01-02 14:24:55 Input socket closed
+2026-01-02 14:25:56 acMain starting
+2026-01-02 14:25:56 AC_RL telemetry configured for UDP 127.0.0.1:9876 and file AC_RL_telemetry.json
+2026-01-02 14:25:56 Telemetry UDP socket created to 127.0.0.1:9876
+2026-01-02 14:25:56 Input UDP socket bound to 127.0.0.1:9877
+2026-01-02 14:28:35 Telemetry socket closed
+2026-01-02 14:28:35 Input socket closed
+2026-01-02 14:29:17 acMain starting
+2026-01-02 14:29:17 AC_RL telemetry configured for UDP 127.0.0.1:9876 and file AC_RL_telemetry.json
+2026-01-02 14:29:17 Telemetry UDP socket created to 127.0.0.1:9876
+2026-01-02 14:29:17 Input UDP socket bound to 127.0.0.1:9877
+2026-01-02 14:37:14 Telemetry socket closed
+2026-01-02 14:37:14 Input socket closed
+2026-01-02 14:39:46 acMain starting
+2026-01-02 14:39:46 AC_RL telemetry configured for UDP 127.0.0.1:9876 and file AC_RL_telemetry.json
+2026-01-02 14:39:47 Telemetry UDP socket created to 127.0.0.1:9876
+2026-01-02 14:39:47 Input UDP socket bound to 127.0.0.1:9877
+2026-01-02 14:42:24 Telemetry socket closed
+2026-01-02 14:42:24 Input socket closed
+2026-01-02 14:42:58 acMain starting
+2026-01-02 14:42:58 AC_RL telemetry configured for UDP 127.0.0.1:9876 and file AC_RL_telemetry.json
+2026-01-02 14:42:58 Telemetry UDP socket created to 127.0.0.1:9876
+2026-01-02 14:42:58 Input UDP socket bound to 127.0.0.1:9877
+2026-01-02 15:06:09 Telemetry socket closed
+2026-01-02 15:06:09 Input socket closed
+2026-01-02 15:06:33 acMain starting
+2026-01-02 15:06:33 AC_RL telemetry configured for UDP 127.0.0.1:9876 and file AC_RL_telemetry.json
+2026-01-02 15:06:33 Telemetry UDP socket created to 127.0.0.1:9876
+2026-01-02 15:06:33 Input UDP socket bound to 127.0.0.1:9877
+2026-01-02 15:10:15 Telemetry socket closed
+2026-01-02 15:10:15 Input socket closed
+2026-01-02 15:10:31 acMain starting
+2026-01-02 15:10:31 AC_RL telemetry configured for UDP 127.0.0.1:9876 and file AC_RL_telemetry.json
+2026-01-02 15:10:31 Telemetry UDP socket created to 127.0.0.1:9876
+2026-01-02 15:10:31 Input UDP socket bound to 127.0.0.1:9877
+2026-01-02 15:12:16 Telemetry socket closed
+2026-01-02 15:12:16 Input socket closed
+2026-01-02 15:12:33 acMain starting
+2026-01-02 15:12:33 AC_RL telemetry configured for UDP 127.0.0.1:9876 and file AC_RL_telemetry.json
+2026-01-02 15:12:33 Telemetry UDP socket created to 127.0.0.1:9876
+2026-01-02 15:12:33 Input UDP socket bound to 127.0.0.1:9877
+2026-01-02 15:20:02 Telemetry socket closed
+2026-01-02 15:20:02 Input socket closed
+2026-01-02 15:20:33 acMain starting
+2026-01-02 15:20:33 AC_RL telemetry configured for UDP 127.0.0.1:9876 and file AC_RL_telemetry.json
+2026-01-02 15:20:33 Telemetry UDP socket created to 127.0.0.1:9876
+2026-01-02 15:20:33 Input UDP socket bound to 127.0.0.1:9877
+2026-01-02 15:39:05 Telemetry socket closed
+2026-01-02 15:39:05 Input socket closed
+2026-01-02 16:12:54 acMain starting
+2026-01-02 16:12:54 AC_RL telemetry configured for UDP 127.0.0.1:9876 and file AC_RL_telemetry.json
+2026-01-02 16:12:54 Telemetry UDP socket created to 127.0.0.1:9876
+2026-01-02 16:12:54 Input UDP socket bound to 127.0.0.1:9877
+2026-01-02 16:21:01 Telemetry socket closed
+2026-01-02 16:21:01 Input socket closed
+2026-01-08 16:22:36 acMain starting
+2026-01-08 16:22:36 AC_RL telemetry configured for UDP 127.0.0.1:9876 and file AC_RL_telemetry.json
+2026-01-08 16:22:36 Telemetry UDP socket created to 127.0.0.1:9876
+2026-01-08 16:22:36 Input UDP socket bound to 127.0.0.1:9877
