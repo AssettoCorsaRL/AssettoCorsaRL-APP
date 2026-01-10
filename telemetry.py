@@ -2,12 +2,14 @@ import socket
 import time
 import json
 
+
 def hexdump(b, width=16):
     for i in range(0, len(b), width):
-        chunk = b[i:i+width]
-        hexbytes = ' '.join(f'{x:02x}' for x in chunk)
-        ascii_part = ''.join(chr(x) if 32 <= x < 127 else '.' for x in chunk)
-        print(f'{i:08x}  {hexbytes:<{width*3}}  {ascii_part}')
+        chunk = b[i : i + width]
+        hexbytes = " ".join(f"{x:02x}" for x in chunk)
+        ascii_part = "".join(chr(x) if 32 <= x < 127 else "." for x in chunk)
+        print(f"{i:08x}  {hexbytes:<{width*3}}  {ascii_part}")
+
 
 s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 s.bind(("127.0.0.1", 9876))
@@ -31,13 +33,13 @@ try:
         # Flush at most once per second when we have data
         if last_pkt and (now - last_print) >= 1.0:
             data, addr = last_pkt
-            print(f'got {pkt_count} packets, last {len(data)} bytes from {addr}')
+            print(f"got {pkt_count} packets, last {len(data)} bytes from {addr}")
 
             # try JSON
             try:
-                text = data.decode('utf-8')
+                text = data.decode("utf-8")
             except UnicodeDecodeError:
-                print('binary data:')
+                print("binary data:")
                 hexdump(data)
                 last_print = now
                 last_pkt = None
@@ -45,7 +47,7 @@ try:
                 continue
 
             try:
-                obj = json.loads(text)
+                obj = json.loads(text)["lap"]
                 print(json.dumps(obj, indent=2))
                 last_print = now
                 last_pkt = None
@@ -55,10 +57,10 @@ try:
                 pass
 
             # printable text?
-            if all(32 <= ord(c) < 127 or c in '\r\n\t' for c in text):
+            if all(32 <= ord(c) < 127 or c in "\r\n\t" for c in text):
                 print(text)
             else:
-                print('mixed/non-printable data:')
+                print("mixed/non-printable data:")
                 hexdump(data)
 
             last_print = now

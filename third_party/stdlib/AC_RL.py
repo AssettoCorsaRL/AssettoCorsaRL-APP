@@ -8,8 +8,6 @@ import os
 import sys
 import random
 
-# Ensure app directory and third_party are on sys.path so embedded runtime
-# can find modules placed alongside the app.
 here = os.path.dirname(__file__)
 if here not in sys.path:
     sys.path.insert(0, here)
@@ -17,20 +15,18 @@ third = os.path.join(here, "third_party")
 if third not in sys.path:
     sys.path.insert(0, third)
 
-# Ensure compiled dlls (like _socket.pyd) from the game's dll64 folder are importable
 dll64 = os.path.join(here, "dll64")
 if dll64 not in sys.path:
     sys.path.insert(0, dll64)
 
 try:
-    import _socket as _socket_ext  # try to load _socket directly from dll64
+    import _socket as _socket_ext
 except Exception:
     _socket_ext = None
 
 from IS_ACUtil import *
 
 
-# Module-level debug logger so startup/import errors can be recorded to disk
 def file_log(msg):
     try:
         path = os.path.join(os.path.dirname(__file__), "AC_RL_debug.log")
@@ -607,18 +603,18 @@ def acUpdate(deltaT):  # -------------------------------- AC UPDATE
             }
 
             lap = {
-                "current_lap_time": safe_call(
+                "get_current_lap_time": safe_call(
                     lap_info, "get_current_lap_time", 0, False
                 ),
-                "last_lap_time": safe_call(lap_info, "get_last_lap_time", 0, False),
-                "best_lap_time": safe_call(lap_info, "get_best_lap_time", 0, False),
-                "splits": safe_call(lap_info, "get_splits", 0, False),
-                "split": safe_call(lap_info, "get_split"),
-                "invalid": safe_call(lap_info, "get_invalid", 0),
-                "lap_count": safe_call(lap_info, "get_lap_count", 0),
-                "laps_total": safe_call(lap_info, "get_laps"),
-                "lap_delta": safe_call(lap_info, "get_lap_delta", 0),
-                "current_sector": safe_call(lap_info, "get_current_sector"),
+                "get_last_lap_time": safe_call(lap_info, "get_last_lap_time", 0, False),
+                "get_best_lap_time": safe_call(lap_info, "get_best_lap_time", 0, False),
+                "get_splits": safe_call(lap_info, "get_splits", 0, False),
+                "get_split": safe_call(lap_info, "get_split"),
+                "get_invalid": safe_call(lap_info, "get_invalid", 0),
+                "get_lap_count": safe_call(lap_info, "get_lap_count", 0),
+                "get_laps": safe_call(lap_info, "get_laps"),
+                "get_lap_delta": safe_call(lap_info, "get_lap_delta", 0),
+                "get_current_sector": safe_call(lap_info, "get_current_sector"),
             }
 
             stats = {
