@@ -47,7 +47,7 @@ try:
                 continue
 
             try:
-                obj = json.loads(text)["lap"]
+                obj = json.loads(text)
                 print(json.dumps(obj, indent=2))
                 last_print = now
                 last_pkt = None
