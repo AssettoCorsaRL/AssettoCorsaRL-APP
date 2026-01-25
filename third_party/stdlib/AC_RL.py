@@ -52,7 +52,6 @@ except Exception as e:
         ac.log("[AC_RL] Could not import ac_api modules: %s" % e)
     except Exception:
         pass
-    # Also write diagnostics to disk for easier debugging
     try:
         file_log("Could not import ac_api modules: %s" % e)
         file_log("sys.path: %s" % repr(sys.path))

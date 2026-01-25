@@ -13,7 +13,8 @@ def hexdump(b, width=16):
 
 s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 s.bind(("127.0.0.1", 9876))
-# Set a short timeout so we can batch/aggregate packets and only print once a second
+
+# set a short timeout so we can batch/aggregate packets and only print once a second
 s.settimeout(0.1)
 
 last_print = 0.0
@@ -26,16 +27,13 @@ try:
             last_pkt = (data, addr)
             pkt_count += 1
         except socket.timeout:
-            # no packet this short interval; continue to check if we should flush
             pass
 
         now = time.time()
-        # Flush at most once per second when we have data
         if last_pkt and (now - last_print) >= 1.0:
             data, addr = last_pkt
             print(f"got {pkt_count} packets, last {len(data)} bytes from {addr}")
 
-            # try JSON
             try:
                 text = data.decode("utf-8")
             except UnicodeDecodeError:
@@ -60,8 +58,7 @@ try:
             if all(32 <= ord(c) < 127 or c in "\r\n\t" for c in text):
                 print(text)
             else:
-                print("mixed/non-printable data:")
-                hexdump(data)
+                print("something wrong cuh")
 
             last_print = now
             last_pkt = None

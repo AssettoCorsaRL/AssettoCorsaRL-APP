@@ -8,8 +8,6 @@ import os
 import sys
 import random
 
-# Ensure app directory and third_party are on sys.path so embedded runtime
-# can find modules placed alongside the app.
 here = os.path.dirname(__file__)
 if here not in sys.path:
     sys.path.insert(0, here)
@@ -17,20 +15,18 @@ third = os.path.join(here, "third_party")
 if third not in sys.path:
     sys.path.insert(0, third)
 
-# Ensure compiled dlls (like _socket.pyd) from the game's dll64 folder are importable
 dll64 = os.path.join(here, "dll64")
 if dll64 not in sys.path:
     sys.path.insert(0, dll64)
 
 try:
-    import _socket as _socket_ext  # try to load _socket directly from dll64
+    import _socket as _socket_ext
 except Exception:
     _socket_ext = None
 
 from IS_ACUtil import *
 
 
-# Module-level debug logger so startup/import errors can be recorded to disk
 def file_log(msg):
     try:
         path = os.path.join(os.path.dirname(__file__), "AC_RL_debug.log")
@@ -56,7 +52,6 @@ except Exception as e:
         ac.log("[AC_RL] Could not import ac_api modules: %s" % e)
     except Exception:
         pass
-    # Also write diagnostics to disk for easier debugging
     try:
         file_log("Could not import ac_api modules: %s" % e)
         file_log("sys.path: %s" % repr(sys.path))
@@ -137,22 +132,19 @@ def call_sendcmd(*args, **kwargs):
     return None
 
 
-# --------------------------------------------------------------------
-
-
 appName = "AC_RL"
 width, height = 800, 800
 
 
 TELEMETRY_FILENAME = "AC_RL_telemetry.json"
 
-# UDP telemetry defaults (can be overridden via AC_RL_input.json)
+# Output UDP telemetry defaults
 TELEMETRY_UDP_HOST = "127.0.0.1"
 TELEMETRY_UDP_PORT = 9876
 telemetry_sock = None
 telemetry_addr = (TELEMETRY_UDP_HOST, TELEMETRY_UDP_PORT)
 
-# Input UDP defaults (commands) - listens for JSON commands
+# Input UDP defaults
 INPUT_UDP_HOST = "127.0.0.1"
 INPUT_UDP_PORT = 9877
 input_sock = None
@@ -160,9 +152,6 @@ input_addr = (INPUT_UDP_HOST, INPUT_UDP_PORT)
 
 
 def handle_input_data(cmd, path=None):
-    """Process a dict of commands coming from file or socket.
-    If path is provided and reset is handled, the function will write back reset=False to that file.
-    """
     try:
         if not isinstance(cmd, dict):
             return
@@ -232,7 +221,6 @@ def handle_input_data(cmd, path=None):
                 INPUT_UDP_HOST = host
                 INPUT_UDP_PORT = port
                 input_addr = (INPUT_UDP_HOST, INPUT_UDP_PORT)
-                # Rebind input socket if already open
                 if input_sock:
                     try:
                         input_sock.close()
@@ -327,10 +315,6 @@ def handle_input_data(cmd, path=None):
 
 
 def check_input_file():
-    """
-    Read AC_RL_input.json and if it contains {"reset": true} call the reset command via `call_sendcmd` and set reset to false.
-    Also listens for JSON commands on the input UDP socket.
-    """
     data = None
     path = None
     try:
@@ -344,7 +328,6 @@ def check_input_file():
             if os.path.exists(alt):
                 path = alt
             else:
-                # No file present; we'll still poll sockets for commands
                 path = None
                 data = None
         if path:
@@ -364,21 +347,18 @@ def check_input_file():
             pass
         data = None
 
-    # Process file-based commands if present
     if isinstance(data, dict):
         try:
             handle_input_data(data, path)
         except Exception:
             pass
 
-    # Now poll the input UDP socket for any incoming commands
     if input_sock:
         try:
             while True:
                 try:
                     pkt, addr = input_sock.recvfrom(65536)
                 except (BlockingIOError, OSError) as e:
-                    # No more data available
                     break
                 try:
                     cmd = json.loads(pkt.decode("utf-8"))
@@ -401,19 +381,14 @@ def check_input_file():
 
 
 def acMain(ac_version):  # ----------------------------- App window Init
-
-    # Don't forget to put anything you'll need to update later as a global variables
-    global appWindow  # <- you'll need to update your window in other functions.
+    global appWindow
 
     appWindow = ac.newApp(appName)
     ac.setTitle(appWindow, appName)
     ac.setSize(appWindow, width, height)
 
-    ac.addRenderCallback(
-        appWindow, appGL
-    )  # -> links this app's window to an OpenGL render function
+    ac.addRenderCallback(appWindow, appGL)
 
-    # ensure file_log exists (if import failed above we created it)
     try:
         file_log("acMain starting")
     except NameError:
@@ -428,7 +403,6 @@ def acMain(ac_version):  # ----------------------------- App window Init
 
         file_log("acMain starting")
 
-    # Create UDP socket to send tyre telemetry
     try:
         file_log(
             "AC_RL telemetry configured for UDP %s:%d and file %s"
@@ -437,7 +411,6 @@ def acMain(ac_version):  # ----------------------------- App window Init
     except Exception:
         pass
 
-    # Try to create a UDP socket; prefer using the bundled _socket if available
     global telemetry_sock, telemetry_addr, input_sock, input_addr
 
     telemetry_sock = _create_udp_socket(
@@ -460,7 +433,6 @@ def acMain(ac_version):  # ----------------------------- App window Init
         except Exception:
             pass
 
-    # Create labels to display tyre info (4 tyres)
     global tyre_labels
     tyre_labels = []
     for i in range(4):
@@ -470,7 +442,6 @@ def acMain(ac_version):  # ----------------------------- App window Init
         ac.setFontSize(lbl, 12)
         tyre_labels.append(lbl)
 
-    # header
     hdr = ac.addLabel(appWindow, appName)
     ac.setPosition(hdr, 10, 0)
     ac.setFontSize(hdr, 16)
@@ -479,26 +450,15 @@ def acMain(ac_version):  # ----------------------------- App window Init
 
 
 def appGL(deltaT):  # -------------------------------- OpenGL UPDATE
-    """
-    This is where you redraw your openGL graphics
-    if you need to use them .
-    """
-    # Call the update routine so we can log telemetry each frame
     acUpdate(deltaT)
 
 
 def acUpdate(deltaT):  # -------------------------------- AC UPDATE
-    """
-    This is where you update your app window ( != OpenGL graphics )
-    such as : labels , listener , ect ...
-    """
-    # Read input file for commands
     try:
         check_input_file()
     except Exception:
         pass
 
-    # Read tyre telemetry from shared memory and update labels.
     if tyre_info is None:
         try:
             file_log("tyre_info is None; skipping update")
@@ -522,11 +482,10 @@ def acUpdate(deltaT):  # -------------------------------- AC UPDATE
 
             ac.setText(tyre_labels[t], text)
 
-        # Write telemetry JSON to a file in AC documents path for external process
         try:
-            # Build full telemetry payload (session, car, inputs, lap, tyres, stats)
             tyres = []
             for t in range(4):
+                # TODO: do this better
                 tyres.append(
                     {
                         "index": t,
@@ -691,7 +650,6 @@ def acUpdate(deltaT):  # -------------------------------- AC UPDATE
 
 
 def acShutdown():
-    """Cleanup socket on shutdown."""
     global telemetry_sock, input_sock
     try:
         if telemetry_sock:

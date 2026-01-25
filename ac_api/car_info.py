@@ -2,26 +2,26 @@ import os
 import sys
 import platform
 
-APP_NAME = 'AC_RL'
+APP_NAME = "AC_RL"
 
-# Add the third party libraries to the path
 try:
     if platform.architecture()[0] == "64bit":
         sysdir = "stdlib64"
     else:
         sysdir = "stdlib"
+    sys.path.insert(len(sys.path), "apps/python/{}/third_party".format(APP_NAME))
+    os.environ["PATH"] += ";."
     sys.path.insert(
-        len(sys.path), 'apps/python/{}/third_party'.format(APP_NAME))
-    os.environ['PATH'] += ";."
-    sys.path.insert(len(sys.path), os.path.join(
-        'apps/python/{}/third_party'.format(APP_NAME), sysdir))
-    os.environ['PATH'] += ";."
+        len(sys.path),
+        os.path.join("apps/python/{}/third_party".format(APP_NAME), sysdir),
+    )
+    os.environ["PATH"] += ";."
 except Exception as e:
     ac.log("[AC_RL] Error importing libraries: %s" % e)
 
-import ac  # noqa: E402
-import acsys  # noqa: E402
-from sim_info import info  # noqa: E402
+import ac  # type: ignore
+import acsys  # type: ignore
+from sim_info import info  # type: ignore
 
 
 def format_time(millis: int) -> str:
@@ -60,6 +60,7 @@ def get_delta_to_car_ahead(formatted: bool = False):
     """
     import ac_api.session_info as si
     import ac_api.lap_info as li
+
     time = 0
     dist = 0
     track_len = si.get_track_length()
@@ -71,8 +72,11 @@ def get_delta_to_car_ahead(formatted: bool = False):
             lap_next = li.get_lap_count(car)
             pos_next = get_location(car)
 
-            dist = max(0, (pos_next * track_len + lap_next *
-                       track_len) - (pos * track_len + lap * track_len))
+            dist = max(
+                0,
+                (pos_next * track_len + lap_next * track_len)
+                - (pos * track_len + lap * track_len),
+            )
             time = max(0.0, dist / max(10.0, get_speed(0, "ms")))
             break
 
@@ -99,6 +103,7 @@ def get_delta_to_car_behind(formatted: bool = False):
     """
     import ac_api.session_info as si
     import ac_api.lap_info as li
+
     time = 0
     dist = 0
     track_len = si.get_track_length()
@@ -109,8 +114,11 @@ def get_delta_to_car_behind(formatted: bool = False):
             lap_next = li.get_lap_count(car)
             pos_next = get_location(car)
 
-            dist = max(0, (pos * track_len + lap * track_len) -
-                       (pos_next * track_len + lap_next * track_len))
+            dist = max(
+                0,
+                (pos * track_len + lap * track_len)
+                - (pos_next * track_len + lap_next * track_len),
+            )
             time = max(0.0, dist / max(10.0, get_speed(car, "ms")))
             break
 
@@ -163,6 +171,7 @@ def get_position(car: int = 0) -> int:
 def get_drs_available():
     return info.physics.drsAvailable
 
+
 # 0 if disabled, 1 if enabled
 
 
@@ -172,6 +181,7 @@ def get_drs_enabled() -> bool:
     :return: DRS enabled
     """
     return info.physics.drsEnabled
+
 
 # Formatted: 0=R, 1=N, 2=1, 3=2, 4=3, 5=4, 6=5, 7=6, 8=7, etc.
 
@@ -210,6 +220,7 @@ def get_fuel() -> float:
     :return: amount of fuel [0, ...]
     """
     return info.physics.fuel
+
 
 # Returns the amount of tyres off-track
 
@@ -259,17 +270,20 @@ def get_total_damage():
     res = (front, rear, left, right, centre)
     return res
 
+
 # Height of the center of gravity of the car from the ground [0, ...]
 
 
 def get_cg_height(car: int = 0) -> float:
     return ac.getCarState(car, acsys.CS.CGHeight)
 
+
 # Speed Delivered to the wheels [0, ...]. Difference between actual speed might cause engine braking?
 
 
 def get_drive_train_speed(car: int = 0):
     return ac.getCarState(car, acsys.CS.DriveTrainSpeed)
+
 
 # Returns velocity in coordinates x,y,z
 
@@ -289,11 +303,13 @@ def get_acceleration():
     res = (x, y, z)
     return res
 
+
 # Checks whether tc is needed
 
 
 def get_tc_in_action():
     return info.physics.tc
+
 
 # 0 for false, 1 for true
 
@@ -301,11 +317,13 @@ def get_tc_in_action():
 def get_abs_in_action():
     return info.physics.abs
 
+
 # Front brake bias between 0(%) and 1(00%)
 
 
 def get_brake_bias():
     return info.physics.brakeBias
+
 
 # Different engine brake mappings
 
