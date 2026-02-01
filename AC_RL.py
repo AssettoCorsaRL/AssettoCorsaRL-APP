@@ -78,7 +78,6 @@ def safe_call(mod, name, *args, default=None):
         return default
 
 
-# --- Socket helpers -------------------------------------------------
 def _create_udp_socket(bind=False, host="127.0.0.1", port=0, blocking=False):
     try:
         import socket
@@ -138,13 +137,11 @@ width, height = 800, 800
 
 TELEMETRY_FILENAME = "AC_RL_telemetry.json"
 
-# Output UDP telemetry defaults
 TELEMETRY_UDP_HOST = "127.0.0.1"
 TELEMETRY_UDP_PORT = 9876
 telemetry_sock = None
 telemetry_addr = (TELEMETRY_UDP_HOST, TELEMETRY_UDP_PORT)
 
-# Input UDP defaults
 INPUT_UDP_HOST = "127.0.0.1"
 INPUT_UDP_PORT = 9877
 input_sock = None
@@ -380,7 +377,7 @@ def check_input_file():
                 pass
 
 
-def acMain(ac_version):  # ----------------------------- App window Init
+def acMain(ac_version):
     global appWindow
 
     appWindow = ac.newApp(appName)
@@ -449,11 +446,11 @@ def acMain(ac_version):  # ----------------------------- App window Init
     return appName
 
 
-def appGL(deltaT):  # -------------------------------- OpenGL UPDATE
+def appGL(deltaT):
     acUpdate(deltaT)
 
 
-def acUpdate(deltaT):  # -------------------------------- AC UPDATE
+def acUpdate(deltaT):
     try:
         check_input_file()
     except Exception:
