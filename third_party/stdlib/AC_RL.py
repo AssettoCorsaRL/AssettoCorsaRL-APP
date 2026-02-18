@@ -78,7 +78,6 @@ def safe_call(mod, name, *args, default=None):
         return default
 
 
-# --- Socket helpers -------------------------------------------------
 def _create_udp_socket(bind=False, host="127.0.0.1", port=0, blocking=False):
     try:
         import socket
@@ -130,9 +129,6 @@ def call_sendcmd(*args, **kwargs):
         except Exception:
             pass
     return None
-
-
-# --------------------------------------------------------------------
 
 
 appName = "AC_RL"
@@ -227,7 +223,6 @@ def handle_input_data(cmd, path=None):
                 INPUT_UDP_HOST = host
                 INPUT_UDP_PORT = port
                 input_addr = (INPUT_UDP_HOST, INPUT_UDP_PORT)
-                # Rebind input socket if already open
                 if input_sock:
                     try:
                         input_sock.close()
@@ -339,7 +334,6 @@ def check_input_file():
             if os.path.exists(alt):
                 path = alt
             else:
-                # No file present; we'll still poll sockets for commands
                 path = None
                 data = None
         if path:
@@ -359,14 +353,12 @@ def check_input_file():
             pass
         data = None
 
-    # Process file-based commands if present
     if isinstance(data, dict):
         try:
             handle_input_data(data, path)
         except Exception:
             pass
 
-    # Now poll the input UDP socket for any incoming commands
     if input_sock:
         try:
             while True:
@@ -397,18 +389,14 @@ def check_input_file():
 
 def acMain(ac_version):  # ----------------------------- App window Init
 
-    # Don't forget to put anything you'll need to update later as a global variables
-    global appWindow  # <- you'll need to update your window in other functions.
+    global appWindow
 
     appWindow = ac.newApp(appName)
     ac.setTitle(appWindow, appName)
     ac.setSize(appWindow, width, height)
 
-    ac.addRenderCallback(
-        appWindow, appGL
-    )  # -> links this app's window to an OpenGL render function
+    ac.addRenderCallback(appWindow, appGL)
 
-    # ensure file_log exists (if import failed above we created it)
     try:
         file_log("acMain starting")
     except NameError:
@@ -517,9 +505,7 @@ def acUpdate(deltaT):  # -------------------------------- AC UPDATE
 
             ac.setText(tyre_labels[t], text)
 
-        # Write telemetry JSON to a file in AC documents path for external process
         try:
-            # Build full telemetry payload (session, car, inputs, lap, tyres, stats)
             tyres = []
             for t in range(4):
                 tyres.append(

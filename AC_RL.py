@@ -598,7 +598,6 @@ def acUpdate(deltaT):
             }
 
             sent = False
-            # Try to send telemetry over UDP first if we have a socket
             if telemetry_sock:
                 try:
                     data_bytes = json.dumps(payload).encode("utf-8")
@@ -611,7 +610,6 @@ def acUpdate(deltaT):
                         pass
 
             if not sent:
-                # Fall back to writing telemetry JSON to a file in AC documents path
                 try:
                     docs = ac.getDocumentsPath()
                 except Exception:
