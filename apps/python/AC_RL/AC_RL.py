@@ -481,8 +481,26 @@ def acUpdate(deltaT):
 
         try:
             tyres = []
+            # Pre-fetch 4D vector data (these return all 4 tyres at once)
+            slip_ratio_data = safe_call(tyre_info, "get_slip_ratio", 0, default=None)
+            slip_angle_data = safe_call(tyre_info, "get_slip_angle", 0, default=None)
+
             for t in range(4):
-                # TODO: do this better
+                # Extract individual tyre values from 4D vectors, with safe fallbacks
+                slip_ratio = None
+                if slip_ratio_data is not None:
+                    try:
+                        slip_ratio = float(slip_ratio_data[t])
+                    except (TypeError, IndexError, ValueError):
+                        slip_ratio = None
+
+                slip_angle = None
+                if slip_angle_data is not None:
+                    try:
+                        slip_angle = float(slip_angle_data[t])
+                    except (TypeError, IndexError, ValueError):
+                        slip_angle = None
+
                 tyres.append(
                     {
                         "index": t,
@@ -504,12 +522,8 @@ def acUpdate(deltaT):
                         "temp_o": safe_call(
                             tyre_info, "get_tyre_temp", t, "o", default=None
                         ),
-                        "slip_ratio": safe_call(
-                            tyre_info, "get_slip_ratio", t, default=None
-                        ),
-                        "slip_angle": safe_call(
-                            tyre_info, "get_slip_angle", t, default=None
-                        ),
+                        "slip_ratio": slip_ratio,
+                        "slip_angle": slip_angle,
                         # "load": safe_call(tyre_info, 'get_load', t, default=None),
                         "heading_vector": safe_call(
                             tyre_info, "get_tyre_heading_vector", t, default=None
