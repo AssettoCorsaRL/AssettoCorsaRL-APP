@@ -146,6 +146,7 @@ INPUT_UDP_HOST = "127.0.0.1"
 INPUT_UDP_PORT = 9877
 input_sock = None
 input_addr = (INPUT_UDP_HOST, INPUT_UDP_PORT)
+telemetry_frame_id = 0
 
 
 def handle_input_data(cmd, path=None):
@@ -451,6 +452,8 @@ def appGL(deltaT):
 
 
 def acUpdate(deltaT):
+    global telemetry_frame_id
+
     try:
         check_input_file()
     except Exception:
@@ -603,6 +606,7 @@ def acUpdate(deltaT):
             payload = {
                 "app": appName,
                 "timestamp": time.time(),
+                "frame_id": int(telemetry_frame_id),
                 "session": session,
                 "car": car,
                 "inputs": inputs,
@@ -610,6 +614,7 @@ def acUpdate(deltaT):
                 "tyres": tyres,
                 "stats": stats,
             }
+            telemetry_frame_id += 1
 
             sent = False
             if telemetry_sock:
